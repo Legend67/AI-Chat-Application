@@ -136,6 +136,7 @@ npm install
 
 ## 🧱 Drizzle ORM Setup
 
+> Which will generate and create database tables.
 Generate migrations:
 ```bash
 cd backend
@@ -155,7 +156,7 @@ npx drizzle-kit migrate
 cd backend
 npm run seed
 ```
-> This inserts FAQ data such as:
+> This inserts FAQ data such as run only once if working from local:
 > Shipping policies
 > Return/refund policies
 > Support hours
