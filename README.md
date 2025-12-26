@@ -86,6 +86,10 @@ Download PostgreSQL from the official site:
 - Ensure pgAdmin and psql are selected
 - After installation, restart your system (recommended).
 ```
+Verify:
+```bash
+psql --version
+```
 Login as postgres:
 ```bash
 psql -U postgres
