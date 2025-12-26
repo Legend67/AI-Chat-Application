@@ -19,54 +19,39 @@ export default function App() {
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  /* -------------------- LOAD HISTORY OR WELCOME -------------------- */
-useEffect(() => {
-  const sessionId = localStorage.getItem("sessionId");
-
-  if (!sessionId) {
-    // 👋 No session → welcome message
-    setMessages([
-      {
-        sender: "ai",
-        text: "Hi! 👋 I’m your AI support assistant. How can I help you today?",
-      },
-    ]);
-    return;
+  /* -------------------- RESET CHAT -------------------- */
+  function resetChat() {
+    localStorage.removeItem("sessionId");
+    setMessages([WELCOME_MESSAGE]);
   }
 
-  // 🔄 Session exists → load full history
-  fetch(`http://localhost:3001/chat/history/${sessionId}`)
-    .then(res => res.json())
-    .then(data => {
-      if (Array.isArray(data) && data.length > 0) {
-        setMessages(
-          data.map((m: any) => ({
-            sender: m.sender,
-            text: m.content,
-          }))
-        );
-      } else {
-        // fallback safety
-        setMessages([
-          {
-            sender: "ai",
-            text: "Hi! 👋 I’m your AI support assistant. How can I help you today?",
-          },
-        ]);
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      setMessages([
-        {
-          sender: "ai",
-          text: "Hi! 👋 I’m your AI support assistant. How can I help you today?",
-        },
-      ]);
-    });
-}, []);
+  /* -------------------- LOAD HISTORY OR WELCOME -------------------- */
+  useEffect(() => {
+    const sessionId = localStorage.getItem("sessionId");
 
-  /* -------------------- AUTO SCROLL (SMART) -------------------- */
+    if (!sessionId) {
+      setMessages([WELCOME_MESSAGE]);
+      return;
+    }
+
+    fetch(`http://localhost:3001/chat/history/${sessionId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setMessages(
+            data.map((m: any) => ({
+              sender: m.sender,
+              text: m.content,
+            }))
+          );
+        } else {
+          setMessages([WELCOME_MESSAGE]);
+        }
+      })
+      .catch(() => setMessages([WELCOME_MESSAGE]));
+  }, []);
+
+  /* -------------------- AUTO SCROLL -------------------- */
   useEffect(() => {
     if (!showScrollDown) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -106,15 +91,13 @@ useEffect(() => {
         body: JSON.stringify({
           message: userMsg.text,
           sessionId,
-}),
-
+        }),
       });
 
       const data = await res.json();
 
       setMessages(prev => [...prev, { sender: "ai", text: data.reply }]);
 
-      // ALWAYS persist sessionId
       if (data.sessionId) {
         localStorage.setItem("sessionId", data.sessionId);
       }
@@ -134,10 +117,18 @@ useEffect(() => {
     <div className="h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4 overflow-hidden">
       <div className="w-full max-w-3xl h-[85vh] bg-gray-900 text-white rounded-2xl shadow-2xl flex flex-col overflow-hidden relative">
 
-        <div className="px-6 py-4 border-b border-gray-700 text-xl font-semibold">
-          🤖 AI Support Chat
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-gray-700 text-xl font-semibold flex items-center justify-between">
+          <span>🤖 AI Support Chat</span>
+          <button
+            onClick={resetChat}
+            className="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg transition"
+          >
+            Reset
+          </button>
         </div>
 
+        {/* Messages */}
         <div
           ref={messagesRef}
           onScroll={handleScroll}
@@ -162,10 +153,14 @@ useEffect(() => {
             </div>
           ))}
 
+          {/* AI typing indicator */}
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-gray-700 px-4 py-2 rounded-xl text-sm">
-                AI is typing…
+              <div className="bg-gray-700 px-4 py-2 rounded-xl text-sm flex items-center gap-1">
+                <span>AI is typing</span>
+                <span className="animate-bounce">.</span>
+                <span className="animate-bounce delay-150">.</span>
+                <span className="animate-bounce delay-300">.</span>
               </div>
             </div>
           )}
@@ -184,6 +179,7 @@ useEffect(() => {
           </button>
         )}
 
+        {/* Input */}
         <div className="border-t border-gray-700 p-4 flex gap-2">
           <textarea
             className="flex-1 bg-gray-800 px-4 py-2 rounded-xl"
@@ -201,7 +197,7 @@ useEffect(() => {
           <button
             onClick={sendMessage}
             disabled={loading}
-            className="bg-blue-600 px-5 py-2 rounded-xl"
+            className="bg-blue-600 px-5 py-2 rounded-xl disabled:opacity-50"
           >
             Send
           </button>
