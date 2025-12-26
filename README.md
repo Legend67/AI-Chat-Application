@@ -66,16 +66,26 @@ AI-Chat-Application/
 
 ## First-Time Setup
 
-### 1 Clone Repository
+### Clone Repository
 ```bash
-git clone <https://github.com/Legend67/AI-Chat-Application>
+git clone https://github.com/Legend67/AI-Chat-Application
 cd AI-Support-Chat
 ```
 
 ---
 
-## 🐘 PostgreSQL Setup
+## 🐘 PostgreSQL Installation and Setup
+```
+Download PostgreSQL from the official site:
+👉 https://www.postgresql.org/download/
 
+Run the installer.
+During setup:
+Set a password for the postgres superuser
+Keep default port 5432
+Ensure pgAdmin and psql are selected
+After installation, restart your system (recommended).
+```
 Login as postgres:
 ```bash
 psql -U postgres
