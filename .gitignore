@@ -1,0 +1,18 @@
+# Node
+node_modules/
+
+# Env files
+.env
+
+# Build outputs
+dist/
+build/
+
+# Drizzle generated files (optional but recommended)
+drizzle/
+
+# Logs
+*.log
+
+# Editor
+.vscode/
