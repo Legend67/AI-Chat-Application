@@ -124,6 +124,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 ```bash
 cd backend
 npm install
+npm run build
 ```
 
 ### Frontend
@@ -168,7 +169,7 @@ npm run seed
 ### Backend
 ```bash
 cd backend
-npm run dev
+npm start
 ```
 
 ### Frontend
