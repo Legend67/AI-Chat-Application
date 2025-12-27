@@ -2,9 +2,9 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "rootDirectory": "backend",
+    "nixpacks": {
+      "startCommand": "npm run start"
+    },
     "buildCommand": "npm install && npm run build"
-  },
-  "deploy": {
-    "startCommand": "npm run start"
   }
 }
